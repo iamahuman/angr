@@ -126,6 +126,7 @@ class Project(object):
             l.warning("Passing a lambda type as the exclude_sim_procedures_func argument to Project causes the resulting object to be un-serializable.")
 
         self._sim_procedures = {}
+        self._unicorn_stops = {}
         self._default_analysis_mode = default_analysis_mode
         self._exclude_sim_procedures_func = exclude_sim_procedures_func
         self._exclude_sim_procedures_list = exclude_sim_procedures_list
@@ -259,7 +260,7 @@ class Project(object):
     # They're all related to hooking!
     #
 
-    def hook(self, addr, func, length=0, kwargs=None):
+    def hook(self, addr, func, length=0, kwargs=None, unicorn_stop=True):
         """
         Hook a section of code with a custom function.
 
@@ -271,11 +272,12 @@ class Project(object):
 
         If `length` is zero the block at the hooked address will be executed immediately after the hook function.
 
-        :param addr:        The address to hook.
-        :param func:        The function that will perform an action when execution reaches the hooked address.
-        :param length:      How many bytes you'd like to skip over with your hook. Can be zero.
-        :param kwargs:      Any additional keyword arguments will be passed to your function or your
-                            :class:`SimProcedure`'s run function.
+        :param addr:            The address to hook.
+        :param func:            The function that will perform an action when execution reaches the hooked address.
+        :param length:          How many bytes you'd like to skip over with your hook. Can be zero.
+        :param kwargs:          Any additional keyword arguments will be passed to your function or your
+                                :class:`SimProcedure`'s run function.
+        :param unicorn_stop:    Whether the Unicorn engine should stop on the address to execute the given procedure.
         """
 
         l.debug('hooking %#x with %s', addr, func)
@@ -299,6 +301,9 @@ class Project(object):
             raise AngrError("%s is not a valid object to execute in a hook", func)
 
         self._sim_procedures[addr] = (proc, kwargs)
+
+        if unicorn_stop:
+            self._unicorn_stops.add(addr)
 
     def is_hooked(self, addr):
         """
@@ -354,6 +359,8 @@ class Project(object):
             return
 
         del self._sim_procedures[addr]
+
+        self._unicorn_stops.discard(addr)
 
     def hooked_by(self, addr):
         """

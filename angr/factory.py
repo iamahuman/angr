@@ -169,7 +169,7 @@ class AngrObjectFactory(object):
 
         elif o.UNICORN in state.options and state.unicorn.check():
             l.info('Creating SimUnicorn at %#x', addr)
-            stops = self._project._sim_procedures.keys()
+            stops = list(self._project._unicorn_stops)
             if extra_stop_points is not None:
                 stops.extend(extra_stop_points)
 
