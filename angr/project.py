@@ -126,7 +126,7 @@ class Project(object):
             l.warning("Passing a lambda type as the exclude_sim_procedures_func argument to Project causes the resulting object to be un-serializable.")
 
         self._sim_procedures = {}
-        self._unicorn_stops = {}
+        self._unicorn_stops = set()
         self._default_analysis_mode = default_analysis_mode
         self._exclude_sim_procedures_func = exclude_sim_procedures_func
         self._exclude_sim_procedures_list = exclude_sim_procedures_list
