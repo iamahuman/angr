@@ -154,7 +154,7 @@ class Project(object):
         procedure_engine = SimEngineHook(self)
         failure_engine = SimEngineFailure(self)
         syscall_engine = SimEngineSyscall(self)
-        unicorn_engine = simuvex.SimEngineUnicorn(self._project._unicorn_stops)
+        unicorn_engine = simuvex.SimEngineUnicorn(self._unicorn_stops)
 
         self.entry = self.loader.main_bin.entry
         self.factory = AngrObjectFactory(
