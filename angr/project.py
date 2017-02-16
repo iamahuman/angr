@@ -273,23 +273,21 @@ class Project(object):
     # They're all related to hooking!
     #
 
-    def hook(self, addr, func, length=0, kwargs=None, unicorn_stop=True):
+    def hook(self, addr, hook, length=0, kwargs=None, unicorn_stop=True):
         """
-        Hook a section of code with a custom function.
+        Hook a section of code with a custom function. This is used internally to provide symbolic
+        summaries of library functions, and can be used to instrument execution or to modify
+        control flow.
 
-        If `func` is a function, it takes a :class:`SimState` and the given `kwargs`. It can return None, in which case
-        it will generate a single exit to the instruction at ``addr+length``, or it can return an array of successor
-        states.
-
-        If func is a :class:`SimProcedure`, it will be run instead of a :class:`SimBlock` at that address.
-
-        If `length` is zero the block at the hooked address will be executed immediately after the hook function.
-
-        :param addr:            The address to hook.
-        :param func:            The function that will perform an action when execution reaches the hooked address.
-        :param length:          How many bytes you'd like to skip over with your hook. Can be zero.
-        :param kwargs:          Any additional keyword arguments will be passed to your function or your
-                                :class:`SimProcedure`'s run function.
+        :param addr:        The address to hook.
+        :param hook:        A :class:`angr.project.Hook` describing a procedure to run at the
+                            given address. You may also pass in a SimProcedure class or a function
+                            directly and it will be wrapped in a Hook object for you.
+        :param length:      If you provide a function for the hook, this is the number of bytes
+                            that will be skipped by executing the hook by default.
+        :param kwargs:      If you provide a SimProcedure for the hook, these are the keyword
+                            arguments that will be passed to the procedure's `run` method
+                            eventually.
         :param unicorn_stop:    Whether the Unicorn engine should stop on the address to execute the given procedure.
         """
         l.debug('hooking %#x with %s', addr, hook)
