@@ -417,7 +417,8 @@ class Path(object):
                 except KeyError:
                     if self._project.is_hooked(bbl_addr):
                         # hooked by a SimProcedure or a user hook
-                        if issubclass(self._project.hooked_by(bbl_addr), simuvex.SimProcedure):
+                        if not issubclass(self._project.hooked_by(bbl_addr).procedure,
+                                            simuvex.procedures.stubs.UserHook.UserHook):
                             block_size = None  # it will not be used
                             jumpkind = 'Ijk_Ret'
                         else:
