@@ -833,14 +833,18 @@ class Unicorn(SimStatePlugin):
 
             # investigate the chunk, taint if symbolic
             chunk_size = last_missing - mo_addr + 1
-            chunk = mo.bytes_at(mo_addr, chunk_size)
-            d = self._process_value(chunk, 'mem')
-            if d is None:
-                #print "TAINT: %x, %d" % (mo_addr, chunk_size)
-                _taint(mo_addr, chunk_size)
+            chunk = mo.bytes_at(mo_addr, chunk_size, allow_bytes=True)
+            if mo.is_bytes:
+                #import ipdb; ipdb.set_trace()
+                data[mo_addr - start : mo_addr - start + chunk_size] = chunk
             else:
-                s = self.state.solver.eval(d, cast_to=bytes)
-                data[mo_addr-start:mo_addr-start+chunk_size] = s
+                d = self._process_value(chunk, 'mem')
+                if d is None:
+                    #print "TAINT: %x, %d" % (mo_addr, chunk_size)
+                    _taint(mo_addr, chunk_size)
+                else:
+                    s = self.state.solver.eval(d, cast_to=bytes)
+                    data[mo_addr-start:mo_addr-start+chunk_size] = s
             last_missing = mo_addr - 1
 
         # handle missing bytes at the beginning

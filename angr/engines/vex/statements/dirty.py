@@ -10,12 +10,11 @@ def SimIRStmt_Dirty(engine, state, stmt):
     with state.history.subscribe_actions() as deps:
         exprs = [engine.handle_expression(state, e) for e in stmt.args]
 
-    func = self.state.trace_replay_overrides.override_for_dirtyhelper(self.stmt.cee.name)
+    func = state.trace_replay_overrides.override_for_dirtyhelper(stmt.cee.name)
     if func is None:
-        func = getattr(dirty, self.stmt.cee.name, None)
+        func = getattr(dirty, stmt.cee.name, None)
 
     if func is not None:
-        func = getattr(dirty, stmt.cee.name)
         retval, retval_constraints = func(state, *exprs)
         state.solver.add(*retval_constraints)
 
