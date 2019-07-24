@@ -35,9 +35,9 @@ jobs:
   dependsOn: Build
   condition: succeeded()
   variables:
-    NUM_WORKERS: 10
+    NUM_WORKERS: 6
   strategy:
-    maxParallel: 10
+    maxParallel: 6
     matrix:
       worker_0:
         WORKER: 0
@@ -51,14 +51,6 @@ jobs:
         WORKER: 4
       worker_5:
         WORKER: 5
-      worker_6:
-        WORKER: 6
-      worker_7:
-        WORKER: 7
-      worker_8:
-        WORKER: 8
-      worker_9:
-        WORKER: 9
   steps:
   - task: DownloadPipelineArtifact@0
     inputs:
