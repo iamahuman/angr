@@ -1,7 +1,6 @@
 jobs:
 - job: Build
-  pool:
-    vmImage: ubuntu-16.04
+  pool: linux-docker
   container:
     image: angr/ci:1
     options: --cap-add=SYS_PTRACE
@@ -14,8 +13,7 @@ jobs:
       targetPath: ./build.tar.gz
 
 - job: Lint
-  pool:
-    vmImage: ubuntu-16.04
+  pool: linux-docker
   container:
     image: angr/ci:1
     options: --cap-add=SYS_PTRACE
@@ -30,8 +28,7 @@ jobs:
   - script: /root/scripts/azure-lint.sh
 
 - job: Test
-  pool:
-    vmImage: ubuntu-16.04
+  pool: linux-docker
   container:
     image: angr/ci:1
     options: --cap-add=SYS_PTRACE
